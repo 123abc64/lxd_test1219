@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* 后台管理页面专用样式 */
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .form-container {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .admin-header {
+            background-color: var(--white);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        
+        .admin-nav {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .admin-nav-btn {
+            padding: 12px 24px;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .admin-nav-btn.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .admin-section {
+            display: none;
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.1);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: #4c51bf;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #c6f6d5;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background-color: #e53e3e;
+            color: var(--white);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c53030;
+            transform: translateY(-2px);
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .gallery-item-info {
+            padding: 10px;
+            background-color: var(--white);
+        }
+        
+        .gallery-item-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .gallery-item-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .gallery-item-actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .timeline-admin {
+            margin-top: 30px;
+        }
+        
+        .timeline-item-admin {
+            background-color: var(--light-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .timeline-item-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* 个人信息管理模块样式 */
+        .personal-info-content {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .personal-info-left {
+            flex: 1;
+            min-width: 400px;
+        }
+        
+        .personal-info-right {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .photo-upload-section {
+            margin-top: 20px;
+        }
+        
+        .photo-preview-container {
+            margin-bottom: 20px;
+        }
+        
+        .photo-preview {
+            width: 200px;
+            height: 200px;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .photo-preview:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(90, 103, 216, 0.05);
+        }
+        
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .placeholder-text {
+            color: var(--text-muted);
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .timeline-item-actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .error-message {
+            color: #e53e3e;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .success-message {
+            color: #38a169;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        /* 消息提示样式 */
+        .message-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .message-toast.success {
+            background-color: #38a169;
+        }
+        
+        .message-toast.error {
+            background-color: #e53e3e;
+        }
+        
+        .message-toast.warning {
+            background-color: #d69e2e;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* 技能管理样式 */
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .skill-item {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .skill-info {
+            flex: 1;
+        }
+        
+        .skill-info h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        
+        .skill-level {
+            height: 10px;
+            background-color: var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .skill-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .skill-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* 留言管理样式 */
+        .messages-controls {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: var(--light-bg);
+            border-radius: var(--border-radius);
+        }
+        
+        .messages-filter {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-group label {
+            font-weight: 500;
+            color: var(--text-dark);
+            white-space: nowrap;
+        }
+        
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            min-width: 120px;
+        }
+        
+        .messages-container {
+            margin-top: 30px;
+        }
+        
+        .message-item {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .message-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .message-date {
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+        
+        .message-content p {
+            margin: 8px 0;
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .message-actions button {
+            padding: 5px 12px;
+            font-size: 14px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background-color: var(--white);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination button.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+        
+        /* 手稿布局样式 */
+        .manuscript-layout {
+            background-color: #f8f5e6;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .manuscript-input {
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px dashed #8b4513;
+            padding: 8px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            transition: none;
+        }
+        
+        .manuscript-input:focus {
+            outline: none;
+            border-bottom: 2px solid var(--primary-color);
+            box-shadow: none;
+        }
+        
+        /* 富文本编辑器样式 */
+        .rich-text-editor {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background-color: var(--white);
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background-color: var(--light-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .toolbar-btn {
+            padding: 5px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--white);
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        
+        .toolbar-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+        
+        .editor-content {
+            min-height: 150px;
+            padding: 15px;
+            font-size: 16px;
+            line-height: 1.6;
+            background-color: var(--white);
+        }
+        
+        .editor-content:focus {
+            outline: none;
+        }
+        
+        /* 占位符样式 */
+        .editor-content:empty::before {
+            content: attr(placeholder);
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header" style="position: relative;">
+            <h1>后台管理</h1>
+            <p>管理您的个人主页内容</p>
+            <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 10px;">
+                <button id="logout-btn" class="btn btn-secondary" title="退出登录">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+                <button id="back-to-home" class="btn btn-secondary" title="回到主页">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle;">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    回到主页
+                </button>
+            </div>
+        </div>
+        
+        <div class="admin-nav">
+            <button class="admin-nav-btn active" data-section="works">作品管理</button>
+            <button class="admin-nav-btn" data-section="experiences">经历管理</button>
+            <button class="admin-nav-btn" data-section="personal-info">个人信息</button>
+            <button class="admin-nav-btn" data-section="skills">技能管理</button>
+            <button class="admin-nav-btn" data-section="messages">留言管理</button>
+            <button class="admin-nav-btn" data-section="security">安全设置</button>
+        </div>
+        
+        <!-- 作品管理 -->
+        <div id="works" class="admin-section active">
+            <div class="form-container">
+                <h2>作品管理</h2>
+                
+                <form id="work-form">
+                <div class="form-group">
+                    <label for="work-title">作品标题</label>
+                    <input type="text" id="work-title" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="work-description">作品描述</label>
+                    <textarea id="work-description" name="description" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="work-image">作品图片</label>
+                    <input type="file" id="work-image" name="image" accept="image/*" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="work-category">作品分类</label>
+                    <select id="work-category" name="category" required>
+                        <option value="">请选择分类</option>
+                        <option value="web">网页设计</option>
+                        <option value="app">应用开发</option>
+                        <option value="design">UI/UX设计</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+                
+                <input type="hidden" id="work-id" name="id">
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">保存作品</button>
+                    <button type="button" id="cancel-work-btn" class="btn btn-secondary" style="display: none;">取消编辑</button>
+                </div>
+            </form>
+            
+            <div class="gallery" id="work-gallery">
+                <!-- 作品将通过JavaScript动态加载 -->
+            </div>
+            </div>
+        </div>
+        
+        <!-- 经历管理 -->
+        <div id="experiences" class="admin-section">
+            <div class="form-container">
+                <h2>经历管理</h2>
+            
+            <form id="experience-form">
+                <div class="form-group">
+                    <label for="experience-type">经历类型</label>
+                    <select id="experience-type" name="type" required>
+                        <option value="education">教育经历</option>
+                        <option value="work">工作经历</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience-title">职位/学位</label>
+                    <input type="text" id="experience-title" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience-company">公司/学校</label>
+                    <input type="text" id="experience-company" name="company" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience-date">日期</label>
+                    <input type="text" id="experience-date" name="date" placeholder="例如：2020-2024" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience-description">描述</label>
+                    <textarea id="experience-description" name="description" rows="4" placeholder="用分号分隔多个要点" required></textarea>
+                </div>
+                
+                <input type="hidden" id="experience-id" name="id">
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">保存经历</button>
+                    <button type="button" id="cancel-experience-btn" class="btn btn-secondary" style="display: none;">取消编辑</button>
+                </div>
+            </form>
+            
+            </div>
+            <div class="timeline-admin" id="experience-timeline">
+                <!-- 经历将通过JavaScript动态加载 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 个人信息管理 -->
+    <div class="admin-section" id="personal-info">
+        <div class="form-container">
+            <h2>个人信息</h2>
+            <div class="personal-info-content">
+                <div class="personal-info-left">
+                    <h3>基本信息</h3>
+                    <form id="personal-info-form" class="manuscript-layout">
+                        <div class="form-group">
+                            <label for="personal-name">姓名</label>
+                            <input type="text" id="personal-name" required class="manuscript-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="personal-phone">电话</label>
+                            <input type="tel" id="personal-phone" required class="manuscript-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="personal-email">邮箱</label>
+                            <input type="email" id="personal-email" required class="manuscript-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="personal-qq">QQ</label>
+                            <input type="text" id="personal-qq" required class="manuscript-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="personal-school">学校</label>
+                            <input type="text" id="personal-school" required class="manuscript-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="personal-bio">关于我</label>
+                            <div id="rich-text-editor" class="rich-text-editor">
+                                <div class="editor-toolbar">
+                                    <button type="button" class="toolbar-btn" data-command="bold"><strong>B</strong></button>
+                                    <button type="button" class="toolbar-btn" data-command="italic"><em>I</em></button>
+                                    <button type="button" class="toolbar-btn" data-command="underline"><u>U</u></button>
+                                    <button type="button" class="toolbar-btn" data-command="insertUnorderedList">• List</button>
+                                    <button type="button" class="toolbar-btn" data-command="insertOrderedList">1. List</button>
+                                </div>
+                                <div id="personal-bio" class="editor-content" contenteditable="true" required placeholder="输入文字..."></div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">保存个人信息</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="personal-info-right">
+                    <h3>上传照片</h3>
+                    <div class="photo-upload-section">
+                        <div class="photo-preview-container">
+                            <div id="photo-preview" class="photo-preview">
+                                <!-- 预览图将通过JavaScript动态生成 -->
+                                <div class="placeholder-text">点击添加照片</div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <input type="file" id="personal-photo" accept="image/*" style="display: none;">
+                            <button type="button" id="upload-photo-btn" class="btn btn-secondary">上传照片</button>
+                            <button type="button" id="update-photo-btn" class="btn btn-primary" style="display: none;">更改照片</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 技能管理 -->
+    <div class="admin-section" id="skills">
+        <div class="form-container">
+            <h2>技能管理</h2>
+            <form id="skill-form">
+                <div class="form-group">
+                    <label for="skill-name">技能名称</label>
+                    <input type="text" id="skill-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="skill-level">熟练程度 (1-100)</label>
+                    <input type="number" id="skill-level" min="1" max="100" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">添加技能</button>
+                </div>
+            </form>
+            </div>
+            <div class="skills-container" id="skills-container">
+                <!-- 技能列表将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <!-- 留言管理 -->
+    <div class="admin-section" id="messages">
+        <div class="form-container">
+            <h2>留言管理</h2>
+            
+            <!-- 留言筛选和控制 -->
+        <div class="messages-controls" style="margin-bottom: 20px;">
+            <div class="messages-filter" style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px;">
+                <div class="filter-group">
+                    <label for="filter-status">状态筛选：</label>
+                    <select id="filter-status">
+                        <option value="all">全部</option>
+                        <option value="visible">已显示</option>
+                        <option value="hidden">已隐藏</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-date">日期排序：</label>
+                    <select id="filter-date">
+                        <option value="latest">最新</option>
+                        <option value="oldest">最早</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 留言列表 -->
+        <div class="messages-container" id="messages-container">
+            <!-- 留言列表将通过JavaScript动态生成 -->
+        </div>
+        
+        <!-- 分页控件 -->
+        <div class="pagination" id="pagination" style="display: flex; justify-content: center; margin-top: 30px; gap: 10px;">
+            <!-- 分页按钮将通过JavaScript动态生成 -->
+        </div>
+        </div>
+    </div>
+    
+    <!-- 安全设置 -->
+    <div class="admin-section" id="security">
+        <div class="form-container">
+            <h2>安全设置</h2>
+            <form id="security-form">
+                <div class="form-group">
+                    <label for="current-password">当前密码</label>
+                    <input type="password" id="current-password" placeholder="输入当前密码">
+                </div>
+                <div class="form-group">
+                    <label for="new-password">新密码</label>
+                    <input type="password" id="new-password" placeholder="输入新密码（至少6位）" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">确认新密码</label>
+                    <input type="password" id="confirm-password" placeholder="再次输入新密码">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">修改密码</button>
+                </div>
+            </form>
+            
+            <div class="security-info" style="margin-top: 30px; padding: 20px; background-color: var(--light-bg); border-radius: var(--border-radius);">
+                <h4 style="margin-bottom: 10px;">安全提示</h4>
+                <ul style="margin: 0; padding-left: 20px; color: var(--text-medium);">
+                    <li>密码长度至少6位</li>
+                    <li>建议使用字母、数字和特殊字符的组合</li>
+                    <li>定期更换密码以确保账户安全</li>
+                    <li>默认密码为 lxd123，首次登录请立即修改</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOMContentLoaded事件确保DOM元素完全加载后再执行JavaScript代码
+        document.addEventListener('DOMContentLoaded', function() {
+            // 权限检查
+            function checkAdminAuth() {
+                // 检查是否有有效的登录状态
+                const loginTime = sessionStorage.getItem('adminLoginTime');
+                const currentTime = Date.now();
+                
+                // 如果没有登录时间或超过30分钟，需要重新登录
+                if (!loginTime || (currentTime - parseInt(loginTime)) > 30 * 60 * 1000) {
+                    // 重定向到主页进行登录
+                    window.location.href = '../index.html';
+                    return false;
+                }
+                
+                // 更新登录时间
+                sessionStorage.setItem('adminLoginTime', currentTime.toString());
+                return true;
+            }
+
+            // 如果权限检查失败，阻止执行
+            if (!checkAdminAuth()) {
+                throw new Error('未授权访问');
+            }
+
+            // DOM元素
+            const adminNavBtns = document.querySelectorAll('.admin-nav-btn');
+            const adminSections = document.querySelectorAll('.admin-section');
+            
+            // 作品管理
+            const workForm = document.getElementById('work-form');
+            const workGallery = document.getElementById('work-gallery');
+            const cancelWorkBtn = document.getElementById('cancel-work-btn');
+            const workIdInput = document.getElementById('work-id');
+            
+            // 经历管理
+            const experienceForm = document.getElementById('experience-form');
+            const experienceTimeline = document.getElementById('experience-timeline');
+            const cancelExperienceBtn = document.getElementById('cancel-experience-btn');
+            const experienceIdInput = document.getElementById('experience-id');
+        
+            // 导航切换
+            adminNavBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const sectionId = btn.getAttribute('data-section');
+                    console.log('切换到模块:', sectionId);
+                    
+                    // 更新导航按钮状态
+                    adminNavBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    // 显示对应部分
+                    adminSections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === sectionId) {
+                            section.classList.add('active');
+                            console.log('显示模块:', sectionId);
+                            // 切换时重新加载数据
+                            if (sectionId === 'works') {
+                                loadWorks();
+                            } else if (sectionId === 'experiences') {
+                                loadExperiences();
+                            } else if (sectionId === 'personal-info') {
+                                loadPersonalInfo();
+                            } else if (sectionId === 'skills') {
+                                loadSkills();
+                            } else if (sectionId === 'messages') {
+                                loadMessages();
+                            } else if (sectionId === 'security') {
+                                // 安全设置不需要加载数据
+                            }
+                        }
+                    });
+                });
+            });
+
+            // 加载作品
+            function loadWorks() {
+                const works = JSON.parse(localStorage.getItem('works')) || [];
+                workGallery.innerHTML = '';
+                
+                works.forEach(work => {
+                    const workElement = document.createElement('div');
+                    workElement.className = 'gallery-item';
+                    workElement.innerHTML = `
+                        <img src="${work.image}" alt="${work.title}">
+                        <div class="gallery-item-info">
+                            <div class="gallery-item-title">${work.title}</div>
+                            <div class="gallery-item-actions">
+                                <button class="btn btn-secondary" onclick="editWork('${work.id}')">编辑</button>
+                                <button class="btn btn-danger" onclick="deleteWork('${work.id}')">删除</button>
+                            </div>
+                        </div>
+                    `;
+                    workGallery.appendChild(workElement);
+                });
+            }
+
+            // 显示消息提示
+        function showMessage(message, type = 'success') {
+            const messageToast = document.createElement('div');
+            messageToast.className = `message-toast ${type}`;
+            messageToast.textContent = message;
+            
+            document.body.appendChild(messageToast);
+            
+            // 3秒后自动移除消息
+            setTimeout(() => {
+                messageToast.remove();
+            }, 3000);
+        }
+
+        // 加载经历
+        function loadExperiences() {
+            const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
+            experienceTimeline.innerHTML = '';
+            
+            experiences.forEach(experience => {
+                const experienceElement = document.createElement('div');
+                experienceElement.className = 'timeline-item-admin';
+                experienceElement.innerHTML = `
+                    <div class="timeline-item-actions">
+                        <button class="btn btn-secondary" onclick="editExperience('${experience.id}')">编辑</button>
+                        <button class="btn btn-danger" onclick="deleteExperience('${experience.id}')">删除</button>
+                    </div>
+                    <div><strong>类型：</strong>${experience.type === 'education' ? '教育经历' : '工作经历'}</div>
+                    <div><strong>职位/学位：</strong>${experience.title}</div>
+                    <div><strong>公司/学校：</strong>${experience.company}</div>
+                    <div><strong>日期：</strong>${experience.date}</div>
+                    <div><strong>描述：</strong>${experience.description.split(';').map(item => `<br>- ${item.trim()}`).join('')}</div>
+                `;
+                experienceTimeline.appendChild(experienceElement);
+            });
+        }
+        
+        // 保存作品
+        workForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('work-title').value.trim();
+            const description = document.getElementById('work-description').value.trim();
+            const imageFile = document.getElementById('work-image').files[0];
+            const category = document.getElementById('work-category').value;
+            const id = workIdInput.value || Date.now().toString();
+            
+            // 验证必填字段
+            if (!title) {
+                showMessage('请输入作品标题', 'error');
+                return;
+            }
+            if (!description) {
+                showMessage('请输入作品描述', 'error');
+                return;
+            }
+            if (!category) {
+                showMessage('请选择作品分类', 'error');
+                return;
+            }
+            
+            // 如果是编辑模式且没有选择新图片，保留原图片
+            const works = JSON.parse(localStorage.getItem('works')) || [];
+            const existingWork = works.find(w => w.id === id);
+            
+            if (!imageFile && !existingWork) {
+                showMessage('请选择作品图片', 'error');
+                return;
+            }
+            
+            // 验证图片文件
+            if (imageFile) {
+                if (!imageFile.type.startsWith('image/')) {
+                    showMessage('请选择图片文件', 'error');
+                    return;
+                }
+                if (imageFile.size > 5 * 1024 * 1024) {
+                    showMessage('图片文件大小不能超过5MB', 'error');
+                    return;
+                }
+            }
+            
+            const processWork = (imageUrl) => {
+                const work = {
+                    id,
+                    title,
+                    description,
+                    image: imageUrl,
+                    category,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                const works = JSON.parse(localStorage.getItem('works')) || [];
+                const existingIndex = works.findIndex(w => w.id === id);
+                
+                if (existingIndex >= 0) {
+                    works[existingIndex] = work;
+                } else {
+                    works.push(work);
+                }
+                
+                localStorage.setItem('works', JSON.stringify(works));
+                
+                // 触发storage事件以通知前端更新
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'works',
+                    newValue: JSON.stringify(works)
+                }));
+                
+                // 重置表单
+                workForm.reset();
+                workIdInput.value = '';
+                cancelWorkBtn.style.display = 'none';
+                
+                // 重新加载作品
+                loadWorks();
+                
+                // 显示成功消息
+                const message = existingIndex >= 0 ? '作品更新成功！' : '作品保存成功！';
+                showMessage(message, 'success');
+            };
+            
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    processWork(event.target.result);
+                };
+                reader.onerror = () => {
+                    showMessage('图片读取失败，请重试', 'error');
+                };
+                reader.readAsDataURL(imageFile);
+            } else if (existingWork) {
+                processWork(existingWork.image);
+            }
+        });
+        
+        // 保存经历
+        experienceForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const type = document.getElementById('experience-type').value;
+            const title = document.getElementById('experience-title').value.trim();
+            const company = document.getElementById('experience-company').value.trim();
+            const date = document.getElementById('experience-date').value.trim();
+            const description = document.getElementById('experience-description').value.trim();
+            const id = experienceIdInput.value || Date.now().toString();
+            
+            // 验证必填字段
+            if (!title) {
+                showMessage('请输入职位/学位', 'error');
+                return;
+            }
+            if (!company) {
+                showMessage('请输入公司/学校', 'error');
+                return;
+            }
+            if (!date) {
+                showMessage('请输入日期', 'error');
+                return;
+            }
+            if (!description) {
+                showMessage('请输入描述', 'error');
+                return;
+            }
+            
+            const experience = {
+                id,
+                type,
+                title,
+                company,
+                date,
+                description,
+                updatedAt: new Date().toISOString()
+            };
+            
+            const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
+            const existingIndex = experiences.findIndex(exp => exp.id === id);
+            
+            if (existingIndex >= 0) {
+                experiences[existingIndex] = experience;
+                showMessage('经历更新成功！', 'success');
+            } else {
+                experiences.push(experience);
+                showMessage('经历保存成功！', 'success');
+            }
+            
+            localStorage.setItem('experiences', JSON.stringify(experiences));
+            
+            // 重置表单
+            experienceForm.reset();
+            experienceIdInput.value = '';
+            cancelExperienceBtn.style.display = 'none';
+            
+            // 重新加载经历
+            loadExperiences();
+        });
+        
+        // 编辑作品
+        window.editWork = function(id) {
+            const works = JSON.parse(localStorage.getItem('works')) || [];
+            const work = works.find(w => w.id === id);
+            
+            if (work) {
+                document.getElementById('work-title').value = work.title || '';
+                document.getElementById('work-description').value = work.description || '';
+                document.getElementById('work-category').value = work.category || '';
+                workIdInput.value = work.id;
+                cancelWorkBtn.style.display = 'inline-block';
+                
+                // 滚动到表单
+                workForm.scrollIntoView({ behavior: 'smooth' });
+                
+                // 添加视觉反馈
+                workForm.style.borderColor = '#5a67d8';
+                setTimeout(() => {
+                    workForm.style.borderColor = '';
+                }, 2000);
+            } else {
+                showMessage('未找到该作品信息', 'error');
+            }
+        }
+        
+        // 编辑经历
+        window.editExperience = function(id) {
+            const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
+            const experience = experiences.find(exp => exp.id === id);
+            
+            if (experience) {
+                document.getElementById('experience-type').value = experience.type;
+                document.getElementById('experience-title').value = experience.title;
+                document.getElementById('experience-company').value = experience.company;
+                document.getElementById('experience-date').value = experience.date;
+                document.getElementById('experience-description').value = experience.description;
+                experienceIdInput.value = experience.id;
+                cancelExperienceBtn.style.display = 'inline-block';
+                
+                // 滚动到表单
+                experienceForm.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // 删除作品
+        window.deleteWork = function(id) {
+            if (confirm('确定要删除这个作品吗？')) {
+                let works = JSON.parse(localStorage.getItem('works')) || [];
+                works = works.filter(w => w.id !== id);
+                localStorage.setItem('works', JSON.stringify(works));
+                loadWorks();
+                showMessage('作品删除成功！', 'success');
+            }
+        }
+        
+        // 删除经历
+        window.deleteExperience = function(id) {
+            if (confirm('确定要删除这个经历吗？')) {
+                let experiences = JSON.parse(localStorage.getItem('experiences')) || [];
+                experiences = experiences.filter(exp => exp.id !== id);
+                localStorage.setItem('experiences', JSON.stringify(experiences));
+                loadExperiences();
+                showMessage('经历删除成功！', 'success');
+            }
+        }
+        
+        // 个人信息管理
+        const personalInfoForm = document.getElementById('personal-info-form');
+        const personalPhotoInput = document.getElementById('personal-photo');
+        const uploadPhotoBtn = document.getElementById('upload-photo-btn');
+        const updatePhotoBtn = document.getElementById('update-photo-btn');
+        const photoPreview = document.getElementById('photo-preview');
+        const editorToolbar = document.querySelector('.editor-toolbar');
+        const editorContent = document.getElementById('personal-bio');
+        
+        // 富文本编辑器功能
+        if (editorToolbar) {
+            editorToolbar.addEventListener('click', (e) => {
+                if (e.target.classList.contains('toolbar-btn')) {
+                    const command = e.target.getAttribute('data-command');
+                    document.execCommand(command, false, null);
+                    editorContent.focus();
+                }
+            });
+        }
+        
+        // 加载个人信息
+        function loadPersonalInfo() {
+            const personalInfo = JSON.parse(localStorage.getItem('personalInfo')) || {};
+            const personalPhoto = localStorage.getItem('personalPhoto');
+            
+            // 填充表单数据
+            document.getElementById('personal-name').value = personalInfo.name || '';
+            document.getElementById('personal-phone').value = personalInfo.phone || '';
+            document.getElementById('personal-email').value = personalInfo.email || '';
+            document.getElementById('personal-qq').value = personalInfo.qq || '';
+            document.getElementById('personal-school').value = personalInfo.school || '';
+            
+            // 加载富文本内容
+            if (personalInfo.bio) {
+                editorContent.innerHTML = personalInfo.bio;
+            } else {
+                editorContent.innerHTML = '';
+            }
+            
+            // 显示照片预览
+            if (personalPhoto) {
+                photoPreview.innerHTML = `<img src="${personalPhoto}" alt="个人照片" style="width: 100%; height: 100%; object-fit: cover;">`;
+                uploadPhotoBtn.style.display = 'none';
+                updatePhotoBtn.style.display = 'inline-block';
+            } else {
+                photoPreview.innerHTML = '<div class="placeholder-text">点击添加照片</div>';
+                uploadPhotoBtn.style.display = 'inline-block';
+                updatePhotoBtn.style.display = 'none';
+            }
+        }
+        
+        // 保存个人信息
+        personalInfoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // 验证必填字段
+            const name = document.getElementById('personal-name').value.trim();
+            const phone = document.getElementById('personal-phone').value.trim();
+            const email = document.getElementById('personal-email').value.trim();
+            const qq = document.getElementById('personal-qq').value.trim();
+            const school = document.getElementById('personal-school').value.trim();
+            
+            if (!name) {
+                showMessage('请输入姓名', 'error');
+                return;
+            }
+            if (!phone) {
+                showMessage('请输入电话', 'error');
+                return;
+            }
+            if (!email) {
+                showMessage('请输入邮箱', 'error');
+                return;
+            }
+            if (!qq) {
+                showMessage('请输入QQ', 'error');
+                return;
+            }
+            if (!school) {
+                showMessage('请输入学校', 'error');
+                return;
+            }
+            
+            // 验证邮箱格式
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage('请输入正确的邮箱格式', 'error');
+                return;
+            }
+            
+            // 验证电话格式
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            if (!phoneRegex.test(phone)) {
+                showMessage('请输入正确的手机号码格式', 'error');
+                return;
+            }
+            
+            // 获取当前照片（如果存在）
+            const personalPhoto = localStorage.getItem('personalPhoto');
+            
+            const personalInfo = {
+                name,
+                phone,
+                email,
+                qq,
+                school,
+                bio: editorContent.innerHTML,
+                photo: personalPhoto, // 确保照片信息也保存在个人信息中
+                updatedAt: new Date().toISOString()
+            };
+            
+            // 保存到localStorage
+            localStorage.setItem('personalInfo', JSON.stringify(personalInfo));
+            
+            // 触发storage事件以通知前端更新
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'personalInfo',
+                newValue: JSON.stringify(personalInfo)
+            }));
+            
+            // 显示成功消息
+            showMessage('个人信息保存成功！', 'success');
+        });
+        
+        // 照片上传功能
+        uploadPhotoBtn.addEventListener('click', () => {
+            personalPhotoInput.click();
+        });
+        
+        updatePhotoBtn.addEventListener('click', () => {
+            personalPhotoInput.click();
+        });
+        
+        personalPhotoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // 验证文件类型
+                if (!file.type.startsWith('image/')) {
+                    showMessage('请选择图片文件', 'error');
+                    return;
+                }
+                
+                // 验证文件大小（限制为5MB）
+                if (file.size > 5 * 1024 * 1024) {
+                    showMessage('图片文件大小不能超过5MB', 'error');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const imageDataUrl = event.target.result;
+                    
+                    // 保存照片到localStorage
+                    localStorage.setItem('personalPhoto', imageDataUrl);
+                    
+                    // 同时保存到个人信息对象中，确保数据一致性
+                    const personalInfo = JSON.parse(localStorage.getItem('personalInfo')) || {};
+                    personalInfo.photo = imageDataUrl;
+                    personalInfo.updatedAt = new Date().toISOString();
+                    localStorage.setItem('personalInfo', JSON.stringify(personalInfo));
+                    
+                    // 重新加载个人信息显示
+                    loadPersonalInfo();
+                    
+                    // 显示成功消息
+                    showMessage('照片上传成功！', 'success');
+                    
+                    // 更新按钮状态
+                    uploadPhotoBtn.style.display = 'none';
+                    updatePhotoBtn.style.display = 'inline-block';
+                };
+                reader.onerror = () => {
+                    showMessage('照片读取失败，请重试', 'error');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // 作品编辑和删除功能
+        window.editWork = function(workId) {
+            const works = JSON.parse(localStorage.getItem('works')) || [];
+            const work = works.find(w => w.id === workId);
+            
+            if (work) {
+                // 填充表单
+                document.getElementById('work-title').value = work.title;
+                document.getElementById('work-description').value = work.description;
+                document.getElementById('work-category').value = work.category;
+                document.getElementById('work-id').value = work.id;
+                
+                // 显示取消按钮
+                cancelWorkBtn.style.display = 'inline-block';
+                
+                // 滚动到表单
+                workForm.scrollIntoView({ behavior: 'smooth' });
+                
+                // 高亮表单
+                workForm.style.borderColor = '#5a67d8';
+                setTimeout(() => {
+                    workForm.style.borderColor = '';
+                }, 2000);
+            }
+        };
+
+        window.deleteWork = function(workId) {
+            if (confirm('确定要删除这个作品吗？')) {
+                const works = JSON.parse(localStorage.getItem('works')) || [];
+                const filteredWorks = works.filter(w => w.id !== workId);
+                
+                localStorage.setItem('works', JSON.stringify(filteredWorks));
+                
+                // 触发storage事件以通知前端更新
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'works',
+                    newValue: JSON.stringify(filteredWorks)
+                }));
+                
+                loadWorks();
+                showMessage('作品删除成功！', 'success');
+            }
+        };
+
+        // 初始化个人信息
+        loadPersonalInfo();
+        
+        // 技能管理
+        const skillForm = document.getElementById('skill-form');
+        const skillsContainer = document.getElementById('skills-container');
+        
+        // 加载技能
+        function loadSkills() {
+            const skills = JSON.parse(localStorage.getItem('skills')) || [];
+            skillsContainer.innerHTML = '';
+            
+            skills.forEach((skill, index) => {
+                const skillElement = document.createElement('div');
+                skillElement.className = 'skill-item';
+                skillElement.draggable = true;
+                skillElement.dataset.id = skill.id;
+                skillElement.dataset.index = index;
+                skillElement.innerHTML = `
+                    <div class="skill-info">
+                        <h3>${skill.name}</h3>
+                        <div class="skill-level">
+                            <div class="skill-bar" style="width: ${skill.level}%"></div>
+                        </div>
+                        <div class="skill-order">序号：${index + 1}</div>
+                    </div>
+                    <div class="skill-actions">
+                        <button class="btn btn-secondary" onclick="editSkill('${skill.id}')">编辑</button>
+                        <button class="btn btn-danger" onclick="deleteSkill('${skill.id}')">删除</button>
+                    </div>
+                `;
+                
+                // 添加拖拽事件监听器
+                skillElement.addEventListener('dragstart', handleDragStart);
+                skillElement.addEventListener('dragover', handleDragOver);
+                skillElement.addEventListener('drop', handleDrop);
+                
+                skillsContainer.appendChild(skillElement);
+            });
+        }
+        
+        // 保存技能
+        skillForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('skill-name').value.trim();
+            const level = parseInt(document.getElementById('skill-level').value);
+            const editingId = document.getElementById('editing-skill-id')?.value;
+            
+            // 验证输入
+            if (!name) {
+                showMessage('请输入技能名称', 'error');
+                return;
+            }
+            if (isNaN(level) || level < 1 || level > 100) {
+                showMessage('请输入有效的熟练程度（1-100）', 'error');
+                return;
+            }
+            
+            const skills = JSON.parse(localStorage.getItem('skills')) || [];
+            
+            if (editingId) {
+                // 编辑模式
+                const skillIndex = skills.findIndex(s => s.id === editingId);
+                if (skillIndex >= 0) {
+                    skills[skillIndex] = {
+                        ...skills[skillIndex],
+                        name,
+                        level,
+                        updatedAt: new Date().toISOString()
+                    };
+                    showMessage('技能更新成功！', 'success');
+                }
+            } else {
+                // 添加模式
+                const skill = {
+                    id: Date.now().toString(),
+                    name,
+                    level,
+                    createdAt: new Date().toISOString()
+                };
+                skills.push(skill);
+                showMessage('技能添加成功！', 'success');
+            }
+            
+            localStorage.setItem('skills', JSON.stringify(skills));
+            
+            // 重置表单
+            skillForm.reset();
+            const hiddenInput = document.getElementById('editing-skill-id');
+            if (hiddenInput) hiddenInput.remove();
+            
+            // 更新按钮文本
+            const submitBtn = skillForm.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.textContent = '添加技能';
+            
+            // 重新加载技能
+            loadSkills();
+        });
+        
+        // 编辑技能
+        window.editSkill = function(id) {
+            const skills = JSON.parse(localStorage.getItem('skills')) || [];
+            const skill = skills.find(s => s.id === id);
+            
+            if (skill) {
+                document.getElementById('skill-name').value = skill.name;
+                document.getElementById('skill-level').value = skill.level;
+                
+                // 添加隐藏的编辑ID字段
+                let hiddenInput = document.getElementById('editing-skill-id');
+                if (!hiddenInput) {
+                    hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.id = 'editing-skill-id';
+                    skillForm.appendChild(hiddenInput);
+                }
+                hiddenInput.value = skill.id;
+                
+                // 更新按钮文本
+                const submitBtn = skillForm.querySelector('button[type="submit"]');
+                if (submitBtn) submitBtn.textContent = '更新技能';
+                
+                // 滚动到表单
+                skillForm.scrollIntoView({ behavior: 'smooth' });
+                
+                // 添加视觉反馈
+                skillForm.style.borderColor = '#5a67d8';
+                setTimeout(() => {
+                    skillForm.style.borderColor = '';
+                }, 2000);
+            } else {
+                showMessage('未找到该技能信息', 'error');
+            }
+        }
+        
+        // 删除技能
+        window.deleteSkill = function(id) {
+            if (confirm('确定要删除这个技能吗？')) {
+                let skills = JSON.parse(localStorage.getItem('skills')) || [];
+                skills = skills.filter(s => s.id !== id);
+                localStorage.setItem('skills', JSON.stringify(skills));
+                loadSkills();
+                showMessage('技能删除成功！', 'success');
+            }
+        }
+        
+        // 拖拽功能实现
+        let draggedElement = null;
+        
+        function handleDragStart(e) {
+            draggedElement = this;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+        
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+        
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            if (draggedElement !== this) {
+                const skills = JSON.parse(localStorage.getItem('skills')) || [];
+                const draggedIndex = parseInt(draggedElement.dataset.index);
+                const targetIndex = parseInt(this.dataset.index);
+                
+                // 调整技能顺序
+                const [removed] = skills.splice(draggedIndex, 1);
+                skills.splice(targetIndex, 0, removed);
+                
+                localStorage.setItem('skills', JSON.stringify(skills));
+                loadSkills();
+            }
+            
+            return false;
+        }
+        
+        // 留言管理
+        const messagesContainer = document.getElementById('messages-container');
+        const filterStatus = document.getElementById('filter-status');
+        const filterDate = document.getElementById('filter-date');
+        const pagination = document.getElementById('pagination');
+        
+        // 分页和筛选状态
+        let currentPage = 1;
+        const messagesPerPage = 5;
+        let filteredMessages = [];
+        
+        // 加载留言
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            
+            // 设置默认状态（如果没有的话）
+            const messagesWithStatus = messages.map(msg => ({
+                ...msg,
+                status: msg.status || 'visible'
+            }));
+            
+            localStorage.setItem('messages', JSON.stringify(messagesWithStatus));
+            
+            // 应用筛选
+            filterMessages(messagesWithStatus);
+        }
+        
+        // 筛选留言
+        function filterMessages(messages) {
+            const status = filterStatus.value;
+            const dateOrder = filterDate.value;
+            
+            // 按状态筛选
+            let filtered = status === 'all' ? messages : messages.filter(msg => msg.status === status);
+            
+            // 按日期排序
+            filtered.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return dateOrder === 'latest' ? dateB - dateA : dateA - dateB;
+            });
+            
+            filteredMessages = filtered;
+            renderMessagesPage();
+        }
+        
+        // 渲染当前页的留言
+        function renderMessagesPage() {
+            messagesContainer.innerHTML = '';
+            
+            if (filteredMessages.length === 0) {
+                messagesContainer.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-medium);">暂无留言</p>';
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            // 计算分页信息
+            const totalPages = Math.ceil(filteredMessages.length / messagesPerPage);
+            const startIndex = (currentPage - 1) * messagesPerPage;
+            const endIndex = startIndex + messagesPerPage;
+            const currentMessages = filteredMessages.slice(startIndex, endIndex);
+            
+            // 渲染当前页的留言
+            currentMessages.forEach(message => {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message-item';
+                messageElement.innerHTML = `
+                    <div class="message-header">
+                        <h3>${message.name}</h3>
+                        <div class="message-date">${new Date(message.date).toLocaleString()}</div>
+                    </div>
+                    <div class="message-content">
+                        <p><strong>邮箱：</strong>${message.email}</p>
+                        <p><strong>留言：</strong>${message.message}</p>
+                    </div>
+                    ${message.reply ? `
+                        <div class="message-reply" style="margin-top: 15px; padding: 15px; background-color: rgba(90, 103, 216, 0.1); border-left: 3px solid var(--primary-color); border-radius: 0 8px 8px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="background-color: var(--primary-color); color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: 500;">管理员回复</span>
+                                <span style="font-size: 12px; color: var(--text-light);">${new Date(message.reply.date).toLocaleString()}</span>
+                            </div>
+                            <div style="background-color: white; padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <p style="margin: 0; color: var(--text-dark); line-height: 1.6;">${message.reply.content}</p>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="reply-form" style="margin-top: 15px; padding: 15px; background-color: rgba(90, 103, 216, 0.05); border-radius: 8px;">
+                            <h4 style="margin-bottom: 10px; color: var(--primary-color);">添加回复</h4>
+                            <div style="margin-bottom: 10px;">
+                                <textarea id="reply-${message.id}" placeholder="请输入回复内容..." rows="3" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; resize: vertical; font-family: inherit;"></textarea>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-primary" onclick="saveReply('${message.id}')">保存回复</button>
+                                <button class="btn btn-secondary" onclick="cancelReply('${message.id}')">取消</button>
+                            </div>
+                        </div>
+                    `}
+                    <div class="message-actions" style="margin-top: 15px;">
+                        <button class="btn btn-secondary" onclick="toggleMessageStatus('${message.id}')">
+                            ${message.status === 'hidden' ? '显示' : '隐藏'}
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteMessage('${message.id}')">删除</button>
+                    </div>
+                `;
+                
+                messagesContainer.appendChild(messageElement);
+            });
+            
+            // 渲染分页控件
+            renderPagination(totalPages);
+        }
+        
+        // 渲染分页控件
+        function renderPagination(totalPages) {
+            pagination.innerHTML = '';
+            
+            if (totalPages <= 1) {
+                return;
+            }
+            
+            // 上一页按钮
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'btn btn-secondary';
+            prevBtn.textContent = '上一页';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderMessagesPage();
+                }
+            };
+            pagination.appendChild(prevBtn);
+            
+            // 页码按钮
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `btn ${currentPage === i ? 'btn-primary' : 'btn-secondary'}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => {
+                    currentPage = i;
+                    renderMessagesPage();
+                };
+                pagination.appendChild(pageBtn);
+            }
+            
+            // 下一页按钮
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn btn-secondary';
+            nextBtn.textContent = '下一页';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderMessagesPage();
+                }
+            };
+            pagination.appendChild(nextBtn);
+        }
+        
+        // 切换留言显示状态
+        window.toggleMessageStatus = function(id) {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            const messageIndex = messages.findIndex(m => m.id === id);
+            
+            if (messageIndex >= 0) {
+                const currentStatus = messages[messageIndex].status || 'visible';
+                const newStatus = currentStatus === 'hidden' ? 'visible' : 'hidden';
+                messages[messageIndex].status = newStatus;
+                localStorage.setItem('messages', JSON.stringify(messages));
+                loadMessages(); // 重新加载并应用筛选
+                showMessage(`留言已${newStatus === 'hidden' ? '隐藏' : '显示'}！`, 'success');
+            }
+        }
+        
+        // 保存回复
+        window.saveReply = function(messageId) {
+            const replyTextarea = document.getElementById(`reply-${messageId}`);
+            const replyContent = replyTextarea.value.trim();
+            
+            if (!replyContent) {
+                showMessage('请输入回复内容', 'error');
+                return;
+            }
+            
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            const messageIndex = messages.findIndex(m => m.id === messageId);
+            
+            if (messageIndex >= 0) {
+                messages[messageIndex].reply = {
+                    content: replyContent,
+                    date: new Date().toISOString(),
+                    adminName: '管理员'
+                };
+                
+                localStorage.setItem('messages', JSON.stringify(messages));
+                loadMessages(); // 重新加载显示
+                showMessage('回复保存成功！', 'success');
+                
+                // 清空回复表单
+                const replyForm = replyTextarea.closest('.reply-form');
+                if (replyForm) {
+                    replyForm.style.display = 'none';
+                }
+            }
+        }
+        
+        // 取消回复
+        window.cancelReply = function(messageId) {
+            const replyForm = document.querySelector(`#reply-${messageId}`).closest('.reply-form');
+            if (replyForm) {
+                replyForm.style.display = 'none';
+                document.getElementById(`reply-${messageId}`).value = '';
+            }
+        }
+        
+        // 删除留言
+        window.deleteMessage = function(id) {
+            if (confirm('确定要永久删除这条留言吗？')) {
+                let messages = JSON.parse(localStorage.getItem('messages')) || [];
+                messages = messages.filter(m => m.id !== id);
+                localStorage.setItem('messages', JSON.stringify(messages));
+                loadMessages(); // 重新加载并应用筛选
+                showMessage('留言删除成功！', 'success');
+            }
+        }
+        
+        // 筛选控件事件监听
+        filterStatus.addEventListener('change', () => {
+            currentPage = 1; // 重置到第一页
+            loadMessages();
+        });
+        
+        filterDate.addEventListener('change', () => {
+            currentPage = 1; // 重置到第一页
+            loadMessages();
+        });
+        
+        // 取消编辑作品
+        cancelWorkBtn.addEventListener('click', () => {
+            workForm.reset();
+            workIdInput.value = '';
+            cancelWorkBtn.style.display = 'none';
+        });
+        
+        // 取消编辑经历
+        cancelExperienceBtn.addEventListener('click', () => {
+            experienceForm.reset();
+            experienceIdInput.value = '';
+            cancelExperienceBtn.style.display = 'none';
+        });
+
+        // 消息提示函数
+        function showMessage(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `message-toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+        
+        // 留言管理
+
+        // 安全设置
+        const securityForm = document.getElementById('security-form');
+
+        // 安全设置表单提交
+        securityForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value.trim();
+            const newPassword = document.getElementById('new-password').value.trim();
+            const confirmPassword = document.getElementById('confirm-password').value.trim();
+            
+            // 验证输入
+            if (!currentPassword) {
+                showMessage('请输入当前密码', 'error');
+                return;
+            }
+            if (!newPassword) {
+                showMessage('请输入新密码', 'error');
+                return;
+            }
+            if (newPassword.length < 6) {
+                showMessage('新密码长度至少6位', 'error');
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                showMessage('两次输入的新密码不一致', 'error');
+                return;
+            }
+            
+            // 验证当前密码
+            const storedPassword = localStorage.getItem('adminPassword') || 'lxd123';
+            if (currentPassword !== storedPassword) {
+                showMessage('当前密码不正确', 'error');
+                return;
+            }
+            
+            // 保存新密码
+            localStorage.setItem('adminPassword', newPassword);
+            
+            // 清空表单
+            securityForm.reset();
+            
+            showMessage('密码修改成功！', 'success');
+        });
+        
+        // 初始化数据
+        loadWorks();
+        loadExperiences();
+        loadPersonalInfo();
+        loadSkills();
+        loadMessages();
+        
+        console.log('后台管理系统初始化完成');
+        
+        // 回到主页按钮点击事件
+        document.getElementById('back-to-home').addEventListener('click', () => {
+            window.location.href = '../index.html';
+        });
+        
+        // 退出登录按钮点击事件
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            if (confirm('确定要退出登录吗？')) {
+                // 清除登录状态
+                sessionStorage.removeItem('adminLoginTime');
+                showMessage('已退出登录', 'success');
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1000);
+            }
+        });
+    });
+</script>
+</body>
+</html>
